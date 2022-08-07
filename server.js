@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const { readFromFile, readAndAppend  } = require('./helpers/fsUtils');
+const { readFromFile, readAndAppend,readAndDelete  } = require('./helpers/fsUtils');
 const uuid = require('./helpers/uuid');
 
 const PORT = 3001;
@@ -53,6 +53,24 @@ app.post('/api/notes', (req, res) => {
   } else {
     res.status(500).json('Error in posting note');
   }
+});
+
+app.delete(`/api/notes/:id`, (req, res) => {
+    console.info(`${req.method} request received to delete a note`);
+    const id = req.params.id.toLowerCase();
+
+    if (id) {
+        readAndDelete(id, './db/db.json');
+
+        const response = {
+            status: 'success',
+        };
+
+        console.log(response);
+        res.status(201).json(response);
+    } else {
+        res.status(500).json('Errpr in deleting note');
+    }
 });
 
 app.listen(PORT, () => 
